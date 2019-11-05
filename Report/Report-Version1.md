@@ -2,7 +2,7 @@
 
 ## 概述
 
-我们组基于 PlutoSDR，设计并完成了以下两个实验目标.
+我们组基于 PlutoSDR<sup>[1]</sup>，设计并完成了以下两个实验目标.
 一: FM实现音频文件的传输.
 我们利用FM模块和 MATLAB 中的 `Communications Toolbox Support Package for Analog Devices ADALM-Pluto Radio` (下面简称 `Communication Toolbox`) 插件所提供的已经封装好的函数, 成功传输了一段音频文件. 在传输过程中,我们能完整做到自发自收和单收单发这两种模式.
 二: 基于BPSK的文字传输系统.
@@ -13,7 +13,8 @@
 ## 实验原理
 
 ### PlutoSDR 的简单介绍
-(!补充!)
+
+>PlutoSDR 通常在主机（x86）Windows，Linux或Mac或嵌入式Linux平台（Raspberry Pi，Beaglebone，96boards.org）上使用MATLAB，Simulink，GNU Radio或自定义C，C ++，C＃或Python环境与RF信号进行交互。通过USB插入您喜欢的嵌入式Linux平台）。
 
 ### FM音频传输的设计思路
 
@@ -23,7 +24,9 @@
 4. 结果验证: 发送的音频和接受的音频播放一致, 无刺耳杂音或丢失即可
 
 ### BPSK调制的原理
-(!补充!)
+>BPSK (Binary Phase Shift Keying)-------二进制相移键控。是把模拟信号转换成数据值的转换方式之一，利用偏离相位的复数波浪组合来表现信息键控移相方式。
+>BPSK使用了基准的正弦波和相位反转的波浪，使一方为0，另一方为1，从而可以同时传送接受2值(1比特)的信息。
+>由于最单纯的键控移相方式虽抗噪音较强但传送效率差，所以常常使用利用4个相位的QPSK和利用8个相位的8PSK。
 
 ### BPSK文字传输系统
 
@@ -102,7 +105,7 @@
 1. 在Matlab上安装 `Communications Toolbox Support Package for Analog Devices ADALM-Pluto Radio `
 
 2. 安装的 libiio 库文件： windows 和 linux 下配置的方法稍有不同
-    * windows. 到 analog官网<sup>[1]</sup> 上下载相应的 `.exe` 文件安装即可
+    * windows. 到 analog官网<sup>[2]</sup> 上下载相应的 `.exe` 文件安装即可
     * linux. 需要从 analog 中下载源码,自己在本地编译(编译过程不在此展开,请自己查阅官方 wiki 文档实现). 
 
 3. 配置 MingW -- C语言编译器
@@ -137,7 +140,7 @@
     * **注意:** 对于 Pluto 的设置, 主要是设置 `CenterFrequency` 这个频率相同, 否则不能接受到发送的音频信号.
 
 2. 使用 MATLAB 的 FM 模块. FM 有两部分组成--发送和接受模块.
-    
+   
     ```matlab
     %% 发射部分
     % 加载音频并对音频进行采样等数字处理
@@ -407,17 +410,26 @@ s.releaseImpl();
 
 ## 问题总结
 
+这次的开发, 周期很短,而且公开的资料只有官网的 wiki 文档和有限的 MATLAB 文档, 上手不容易, 不过最后基本上全部实现了当时定下的目标, 所以还是可以的. 当然, 我们总结还是有很多问题的: 
+
 ### 环境搭建和配置
 1. 在Matlab上安装 `Communications Toolbox Support Package for Analog Devices ADALM-Pluto Radio ` 失败
     * 解决方案一： 需要在 Matlab 中设置 `web_proxy`，使用外网下载相应的配置文件；
-    * 解决方案二： 在 Analogodevice 的 github<sup>[2]</sup> 仓库中下载已经打包好的 toolbox 文件
-2. 在 Linux 上编译 libiio 库, 根据官方文档需要使用
+    * 解决方案二： 在 Analogodevice 的 github<sup>[3]</sup> 仓库中下载已经打包好的 toolbox 文件
+2. 在 Linux 上编译 libiio 库, 根据官方文档需要使用超级管理员权限,同时,在编译的最后需要和 Matlab 做结合.因此,本地的 Matlab 需要已经以超级管理员身份运行和激活,否则最后一步就会报错, 从而导致环境配置失败.
 
 ### BPSK只实现了传输文字
-理论上来说
+理论上来说 BPSK 不仅可以传输文字, 也可以传输图像, 文件等. 我们本准备使用 Base64 编码做传输, 但是没有成功. 所以, 这也算是不足.
+
+### BPSK 文字传输速度并不是很理想
+这个是和我们设置的数据帧长度有关. 受限于 BPSK 调制方式, 我们为了稳妥起见没有使用更长的帧长度. 当然, 我们也可以使用多进制的调制方式, 比如 4PSK, 16QAM等.
 
 ## 心得体会
+在开发的过程中, 刚开始我们也不了解什么是 BPSK 等通信原理知识. 而且由于参考资料很少, 且绝大部分都是外文参考资料, 我们克服了很大的困难, 尽力排除每一个 Bug, 思考每个问题的原因. 在这个过程中, 我们熟悉了 PlutoSDR 这个设备, 而且使用 MATLAB 让通信原理的理论知识和实践相结合, 加深了对于理论知识的理解.
+
 
 ## 注释和参考文档
-[1] analog官网: https://wiki.analog.com/  
-[2] github仓库网站： https://wiki.analog.com/resources/tools-software/
+[1] PlutoSDR 器件介绍: https://www.analog.com/en/design-center/evaluation-hardware-and-software/evaluation-boards-kits/adalm-pluto.html#eb-overview  
+[2] analog官网: https://wiki.analog.com/  
+[3] github仓库网站： https://wiki.analog.com/resources/tools-software/  
+[4] 本项目所有的代码都托管在了 Github： https://github.com/rongyupan/PlutoSDR-BPSK
