@@ -1,4 +1,4 @@
-# PlutoSDR-BPSK
+# PlutoSDR
 
 PlutoSDR + MATLAB2019b(Linux Version)
 
