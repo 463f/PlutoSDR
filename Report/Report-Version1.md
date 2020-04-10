@@ -80,7 +80,8 @@
 </div>
 
 #### 2.4.3 需要使用的主要函数
-1. 收发函数部分. `./library/matlab/iiio_sys_obj_matlab.m` 中,函数 `function ret = stepImpl(obj, varargin)` 实现了发射和接受数据.具体格式如下:
+1. 收发函数部分. 
+`./library/matlab/iiio_sys_obj_matlab.m` 中,函数 `function ret = stepImpl(obj, varargin)` 实现了发射和接受数据.具体格式如下:
     ```matlab
     % Implement the data transmit flow
     writeData(obj.libiio_data_in_dev, varargin{1});
@@ -89,7 +90,10 @@
     [~, data] = readData(obj.libiio_data_out_dev);
     ```
     其中, `obj` 是代表了一个对象,而这个对象就是我们使用的 Pluto 开发板,这个开发板有很多的属性 (Properties), 我们就可以使用`obj.libiio_data_in_dev` 这样的形式来设置我们的开发板. 使用这样面向对象的代码能极大方便我们的开发流程.
-2. 收发数据设置. 在 `./code/matlab/BPSK/transmitter/bpsk_tx_func.m` 中,原作者设置了要发送的128*4 = 512 bit 的数据。其中前 480 比特是有用信息（60 个字符），后 32 位用作循环冗余校验（CRC）。由于在其他地方设置了收发的数据长度而不好更改，这里我们就用了这 512 比特作为一个数据帧。为了支持任意长度的数据，需要把给定的不足 60 个字符的消
+2. 收发数据设置. 
+在 `./code/matlab/BPSK/transmitter/bpsk_tx_func.m` 中,原作者设置了要发送的`128*4 = 512 bit`的数据。
+其中前 480 比特是有用信息（60 个字符），后 32 位用作循环冗余校验（CRC）。由于在其他地方设置了收发的数据长度而不好更改，这里我们就用了这 512 比特作为一个数据帧。
+为了支持任意长度的数据，需要把给定的不足 60 个字符的消
 息结尾补没有意义的空白字符填充到 60.
 
     ```matalb
